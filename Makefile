@@ -8,7 +8,7 @@ clean:
 
 run:
 	docker run -d app:v1
-    # docker run -it --rm app:test1 /bin/bash
+    # docker run -it --rm app:v1 /bin/bash
 
 test:
 	python -m pytest
