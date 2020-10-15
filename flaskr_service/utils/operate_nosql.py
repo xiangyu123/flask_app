@@ -1,35 +1,40 @@
-'''
-Author: your name
-Date: 2020-10-14 13:08:58
-LastEditTime: 2020-10-14 20:33:30
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /short_url_service/flaskr_service/utils/operate_nosql.py
-'''
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import redis
+from flask import current_app
 
 
-class ShortUrlStore:
+class RedisObj:
     """store short url data in redis"""
 
-    def __init__(self, token, url='redis://localhost:6379', ttl=7200):
+    def __init__(self, token="", ttl=7200):
         self.token = token
-        self.redis = redis.Redis.from_url(url)
+        self.redis = redis.Redis(**current_app.config.get("REDIS_DB_URL"))
         self.ttl = ttl
 
     def set(self, key, value):
-        self.refresh()
-        return self.redis.hset(self.token, key, value)
+        self.refresh(key)
+        return self.redis.setex(key, self.ttl, value)
+        # return self.redis.setex(self.token, key, self.ttl, value)
 
-    def get(self, key, value):
-        self.refresh()
-        return self.redis.hget(self.token, key)
+    def get(self, key):
+        self.refresh(key)
+        return self.redis.get(key)
+        # return self.redis.get(self.token, key)
 
-    def incr(self, key):
-        self.refresh()
-        return self.redis.hincrby(self.token, key, 1)
+    def exist(self, key):
+        return self.redis.exists(key)
+        # return self.redis.exists(self.token, key)
 
-    def refresh(self):
+    def refresh(self, key):
         self.redis.expire(self.token, self.ttl)
+        # self.redis.expire(self.token, self.ttl)
+
+
+# try:
+#     #host is the redis host,the redis server and client are required to open, and the redis default port is 6379
+#     pool = redis.ConnectionPool(host='10.0.64.113', password = 'xxxxx', port=6379, db=3)
+#     print("connected success.")
+# except:
+#     print("could not connect to redis.")
+# r = redis.Redis(connection_pool=pool)
