@@ -11,9 +11,9 @@ class Config(object):
     HOST = "0.0.0.0"
     PORT = 5000
     REDIS_DB_URL = {
-        'host': '127.0.0.1',
+        'host': '172.17.0.2',
         'port': 6379,
-        'password': 'xiangyu1991',
+        'password': 'd1DO0Ezi16ATYyme',
         'db': 0
     }
 
